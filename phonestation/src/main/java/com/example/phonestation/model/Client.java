@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @Data
 @ToString
 @NoArgsConstructor
@@ -16,27 +18,26 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="isConfirmed")
-    private boolean isConfirmed;
-
-    @Column(name="isBanned")
-    private boolean isBanned;
-
     @Column(name="phonenumber")
     private long phonenumber;
 
     @Column(name="email")
     private String email;
 
+    @Column(name="username")
+    private String username;
+
+    @Column(name="lastVisitDate")
+    private LocalDateTime lastVisitDate;
+
     public Client(
-                  @JsonProperty("isConfirmed") boolean isConfirmed,
-                  @JsonProperty("isBanned") boolean isBanned,
                   @JsonProperty("phonenumber") long phonenumber,
-                  @JsonProperty("email") String email)
+                  @JsonProperty("email") String email,
+                  @JsonProperty("username") String username)
     {
-        this.isConfirmed = isConfirmed;
-        this.isBanned = isBanned;
         this.phonenumber = phonenumber;
         this.email = email;
+        this.username = username;
+        this.lastVisitDate = LocalDateTime.now();
     }
 }

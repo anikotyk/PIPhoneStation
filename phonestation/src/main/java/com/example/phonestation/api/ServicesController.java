@@ -4,72 +4,52 @@ import com.example.phonestation.model.PhoneService;
 import com.example.phonestation.service.ClientsServicesService;
 import com.example.phonestation.service.PaymentsService;
 import com.example.phonestation.service.PhoneServicesService;
-import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequestMapping("")
 @RestController
 public class ServicesController {
     private final PhoneServicesService phoneServicesService;
-    private final ClientsServicesService clientsServicesService;
-    private final PaymentsService paymentsService;
-
     @Autowired
     public ServicesController(PhoneServicesService serviceService, ClientsServicesService clientsServicesService,  PaymentsService paymentsService){
         this.phoneServicesService = serviceService;
-        this.clientsServicesService = clientsServicesService;
-        this.paymentsService = paymentsService;
     }
 
     @GetMapping("/get-all-services")
     public List<PhoneService> getAllServices(){
-        return phoneServicesService.getAllServices();
+        return phoneServicesService.getAllActiveServices();
     }
 
-    @PostMapping("/get-all-client-added-services")
-    public String getAllClientAddedServices(@RequestBody String body) throws JSONException {
+    @PostMapping("/add-service")
+    public void addService(@RequestBody String body) throws JSONException {
         JSONObject obj = new JSONObject(body);
-        int clientId = obj.getInt("clientId");
-
-        List<Long> servicesIds = clientsServicesService.getClientServices(clientId);
-        List<PhoneService> services = phoneServicesService.getAllServicesByIds(servicesIds);
-
-        String json = new Gson().toJson(services);
-        return json;
+        long price = obj.getLong("price");
+        String name = obj.getString("name");
+        String description = obj.getString("description");
+        Boolean isTariff = obj.getBoolean("isTariff");
+        phoneServicesService.addPhoneService(price, name, description, isTariff);
     }
 
-    @PostMapping("/get-all-client-paid-services")
-    public String getAllClientPaidServices(@RequestBody String body) throws JSONException {
+    @PostMapping("/delete-service")
+    public void deleteService(@RequestBody String body) throws JSONException {
         JSONObject obj = new JSONObject(body);
-        int clientId = obj.getInt("clientId");
-
-        List<Long> servicesIds = paymentsService.getClientPaidServices(clientId);
-        List<PhoneService> services = phoneServicesService.getAllServicesByIds(servicesIds);
-
-        String json = new Gson().toJson(services);
-        return json;
+        long serviceId = obj.getLong("serviceId");
+        phoneServicesService.deletePhoneService(serviceId);
     }
 
-    @PostMapping("/get-all-client-unpaid-services")
-    public String getAllClientUnpaidServices(@RequestBody String body) throws JSONException {
+    @PostMapping("/edit-service")
+    public void editService(@RequestBody String body) throws JSONException {
         JSONObject obj = new JSONObject(body);
-        int clientId = obj.getInt("clientId");
-
-        List<Long> servicesAddedIds = clientsServicesService.getClientServices(clientId);
-        List<Long> servicesPaidIds = paymentsService.getClientPaidServices(clientId);
-
-        List<Long> servicesIds = new ArrayList<>(servicesAddedIds);
-        servicesIds.removeAll(servicesPaidIds);
-
-        List<PhoneService> services = phoneServicesService.getAllServicesByIds(servicesIds);
-
-        String json = new Gson().toJson(services);
-        return json;
+        long serviceId = obj.getLong("serviceId");
+        long price = obj.getLong("price");
+        String name = obj.getString("name");
+        String description = obj.getString("description");
+        Boolean isTariff = obj.getBoolean("isTariff");
+        phoneServicesService.editPhoneService(serviceId, price, name, description, isTariff);
     }
 }

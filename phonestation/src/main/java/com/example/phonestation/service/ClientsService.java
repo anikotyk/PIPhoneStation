@@ -4,35 +4,31 @@ import com.example.phonestation.dao.ClientDao;
 import com.example.phonestation.model.Client;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
 public class ClientsService {
     private final ClientDao clientDao;
+    public static final int YEARS_INACTIVE_TO_DELETE = 5;
 
     public ClientsService(ClientDao clientDao){
         this.clientDao = clientDao;
     }
 
-    public void banClient(Long clientId){
-        Client client = clientDao.findById(clientId).get();
-        if(client!=null){
-            client.setBanned(true);
-            clientDao.save(client);
-        }
-    }
-
-    public void confirmClient(Long clientId){
-        Client client = clientDao.findById(clientId).get();
-        if(client!=null){
-            client.setConfirmed(true);
-            clientDao.save(client);
-        }
-    }
-
     public List<Client> getAllClients(){
         List<Client> clients = clientDao.findAll();
         return clients;
+    }
+
+    public List<Client> getAllInactiveClients(){
+        LocalDateTime fiveYearsAgo = LocalDateTime.now().minus(YEARS_INACTIVE_TO_DELETE, ChronoUnit.YEARS);
+        return clientDao.findAllByLastVisitDateBefore(fiveYearsAgo);
+    }
+
+    public List<Client> getAllActiveClientsInPeriod(LocalDateTime thresholdDate){
+       return clientDao.findAllByLastVisitDateAfter(thresholdDate);
     }
 
     public Client getClient(String clientEmail){
@@ -59,12 +55,21 @@ public class ClientsService {
         clientDao.save(client);
     }
 
-    public void unbanClient(Long clientId){
+    public void setClientUsername(Long clientId, String username){
         Client client = clientDao.findById(clientId).get();
-        if(client!=null){
-            client.setBanned(false);
-            clientDao.save(client);
-        }
+        client.setUsername(username);
+        clientDao.save(client);
+    }
+
+    public void setClientLastVisitTimeNow(Long clientId){
+        Client client = clientDao.findById(clientId).get();
+        client.setLastVisitDate(LocalDateTime.now());
+        clientDao.save(client);
+    }
+
+    public void deleteClient(Long clientId){
+        Client client = clientDao.findById(clientId).get();
+        clientDao.delete(client);
     }
 }
 

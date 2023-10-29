@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ClientsServiceDao extends JpaRepository<ClientService, Long> {
     public List<ClientService> findAllByClientId(long clientId);
+    public ClientService findByClientIdAndServiceId(long clientId, long serviceId);
 }

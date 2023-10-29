@@ -4,8 +4,8 @@ import com.example.phonestation.dao.PaymentDao;
 import com.example.phonestation.model.Payment;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PaymentsService {
@@ -15,17 +15,26 @@ public class PaymentsService {
         this.paymentDao = paymentDao;
     }
 
-    public void addPayment(int clientId, int serviceId){
+    public void addPayment(Long clientId, Long serviceId){
         Payment payment = new Payment(clientId, serviceId);
         paymentDao.save(payment);
     }
 
-    public List<Long> getClientPaidServices(int clientId){
+    public List<Payment> getAllPaymentsInPeriod(LocalDateTime thresholdDate){
+        List<Payment> payments = paymentDao.findAllByDateTimeOfCreationAfter(thresholdDate);
+        return payments;
+    }
+
+    public List<Payment> getClientPayments(Long clientId){
         List<Payment> payments = paymentDao.findAllByClientId(clientId);
-        List<Long> servicesIds =  payments.stream()
-                .map(payment -> payment.getServiceId())
-                .collect(Collectors.toList());
-        return servicesIds;
+        return payments;
+    }
+
+    public void deleteAllClientPayments(Long clientId){
+        List<Payment> clientPayments = getClientPayments(clientId);
+        for(int i = 0; i < clientPayments.size(); i++){
+            paymentDao.delete(clientPayments.get(i));
+        }
     }
 }
 

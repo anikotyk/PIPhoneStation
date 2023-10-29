@@ -1,16 +1,16 @@
 export default class Client{
     id;
-    isConfirmed;
-    isBanned;
     phonenumber;
     email;
+    username;
+    lastVisitDate;
 
-    constructor(id, isConfirmed, isBanned, phonenumber, email) {
+    constructor(id, phonenumber, email, username, lastVisitDate) {
         this.id = id;
-        this.isConfirmed = isConfirmed;
-        this.isBanned = isBanned;
         this.phonenumber = phonenumber;
         this.email = email;
+        this.username = username;
+        this.lastVisitDate = lastVisitDate;
     }
 
     static from(json){

@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @ToString
@@ -21,9 +23,13 @@ public class Payment {
     @Column(name="serviceId")
     private long serviceId;
 
+    @Column(name="dateTimeOfCreation")
+    private LocalDateTime dateTimeOfCreation;
+
     public Payment(long clientId, long serviceId){
         this.clientId = clientId;
         this.serviceId = serviceId;
+        this.dateTimeOfCreation = LocalDateTime.now();
     }
 }
 

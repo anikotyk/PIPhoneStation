@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @ToString
@@ -21,8 +23,12 @@ public class ClientService {
     @Column(name="serviceId")
     private long serviceId;
 
-    public ClientService(long clientId, long serviceId){
+    @Column(name="expireDate")
+    private LocalDateTime expireDate;
+
+    public ClientService(long clientId, long serviceId, LocalDateTime expireDate){
         this.clientId = clientId;
         this.serviceId = serviceId;
+        this.expireDate = expireDate;
     }
 }
