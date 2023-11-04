@@ -1,10 +1,13 @@
 package com.example.phonestation.api;
 
+import com.example.phonestation.CustomDateTimeDeserializer;
+import com.example.phonestation.CustomDateTimeSerializer;
 import com.example.phonestation.model.Client;
 import com.example.phonestation.service.ClientsService;
 import com.example.phonestation.service.ClientsServicesService;
 import com.example.phonestation.service.PaymentsService;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,19 +22,25 @@ public class ClientsController {
     private final ClientsService clientService;
     private final ClientsServicesService clientsServicesService;
     private final PaymentsService paymentsService;
-
+    private Gson gson;
     @Autowired
     public ClientsController(ClientsService clientService, ClientsServicesService clientsServicesService, PaymentsService paymentsService){
 
         this.clientService = clientService;
         this.clientsServicesService = clientsServicesService;
         this.paymentsService = paymentsService;
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new CustomDateTimeSerializer());
+        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new CustomDateTimeDeserializer());
+
+        gson = gsonBuilder.setPrettyPrinting().create();
     }
 
     @GetMapping("/get-all-clients")
     public String getAllClients(){
         List<Client> clients = clientService.getAllClients();
-        String json = new Gson().toJson(clients);
+        String json = gson.toJson(clients);
         return json;
     }
 
@@ -41,7 +50,7 @@ public class ClientsController {
         String clientEmail = obj.getString("clientEmail");
 
         Client client = clientService.getClient(clientEmail);
-        String json = new Gson().toJson(client);
+        String json = gson.toJson(client);
         return json;
     }
 
@@ -89,7 +98,7 @@ public class ClientsController {
         LocalDateTime thresholdDate = LocalDateTime.now().minusDays(daysCount);
         List<Client> activeClients = clientService.getAllActiveClientsInPeriod(thresholdDate);
         int countActiveUsers = activeClients.size();
-        String json = new Gson().toJson(countActiveUsers);
+        String json = gson.toJson(countActiveUsers);
         return json;
     }
 }

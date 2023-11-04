@@ -1,3 +1,6 @@
+import {parse} from "date-fns";
+import {enGB, enUS} from "date-fns/locale";
+
 export default class Client{
     id;
     phonenumber;
@@ -13,7 +16,12 @@ export default class Client{
         this.lastVisitDate = lastVisitDate;
     }
 
-    static from(json){
-        return Object.assign(new Client(), json);
+    static from(json) {
+        const dateFormat = "dd-MMM-yyyy HH:mm:ss";
+        const parsedDate = parse(json.lastVisitDate, dateFormat, new Date(), {
+            locale: enGB
+        });
+
+        return new Client(json.id, json.phonenumber, json.email, json.username, parsedDate);
     }
 }

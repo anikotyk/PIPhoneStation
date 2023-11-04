@@ -46,6 +46,7 @@ public class ClientsService {
     public void addNewClient(String clientEmail){
         Client client = new Client();
         client.setEmail(clientEmail);
+        client.setLastVisitDate(LocalDateTime.now());
         clientDao.save(client);
     }
 
