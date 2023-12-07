@@ -3,9 +3,11 @@ package com.example.phonestation.api;
 import com.example.phonestation.CustomDateTimeDeserializer;
 import com.example.phonestation.CustomDateTimeSerializer;
 import com.example.phonestation.model.Client;
+import com.example.phonestation.model.PhoneService;
 import com.example.phonestation.service.ClientsService;
 import com.example.phonestation.service.ClientsServicesService;
 import com.example.phonestation.service.PaymentsService;
+import com.example.phonestation.service.PhoneServicesService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.json.JSONException;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @RequestMapping("")
 @RestController
@@ -22,13 +26,15 @@ public class ClientsController {
     private final ClientsService clientService;
     private final ClientsServicesService clientsServicesService;
     private final PaymentsService paymentsService;
+    private final PhoneServicesService phoneServicesService;
     private Gson gson;
     @Autowired
-    public ClientsController(ClientsService clientService, ClientsServicesService clientsServicesService, PaymentsService paymentsService){
+    public ClientsController(ClientsService clientService, ClientsServicesService clientsServicesService, PaymentsService paymentsService, PhoneServicesService phoneServicesService){
 
         this.clientService = clientService;
         this.clientsServicesService = clientsServicesService;
         this.paymentsService = paymentsService;
+        this.phoneServicesService = phoneServicesService;
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(LocalDateTime.class, new CustomDateTimeSerializer());
@@ -81,7 +87,7 @@ public class ClientsController {
     }
 
     @PostMapping("/delete-inactive-clients")
-    public void deleteInactiveUsers(@RequestBody String body) throws JSONException {
+    public void deleteInactiveUsers() throws JSONException {
         List<Client> clients = clientService.getAllInactiveClients();
         for(int i = 0; i < clients.size(); i++){
             Long clientId = clients.get(i).getId();
@@ -99,6 +105,22 @@ public class ClientsController {
         List<Client> activeClients = clientService.getAllActiveClientsInPeriod(thresholdDate);
         int countActiveUsers = activeClients.size();
         String json = gson.toJson(countActiveUsers);
+        return json;
+    }
+
+    @GetMapping("/get-all-clients-with-active-services")
+    public String getAllClientsWithActiveServices() {
+        List<Client> clients = clientService.getAllClients();
+        Map<Client, List<PhoneService>> mapClientServices = new HashMap<>();
+
+        for (Client client : clients) {
+            Long clientId = client.getId();
+            List<Long> servicesIds = clientsServicesService.getClientActiveServices(clientId);
+            List<PhoneService> services = phoneServicesService.getAllServicesByIds(servicesIds);
+            mapClientServices.put(client, services);
+        }
+
+        String json = gson.toJson(mapClientServices);
         return json;
     }
 }

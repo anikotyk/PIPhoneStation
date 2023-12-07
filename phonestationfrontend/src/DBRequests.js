@@ -37,6 +37,39 @@ export let getAllClients = async (e) => {
     }
 }
 
+export let getAllClientsWithActiveServices = async (e) => {
+    try {
+        let res = await fetch("http://localhost:8080/phonestation/get-all-clients-with-active-services", {
+            method: "GET"
+        });
+        if (res.status === 200) {
+            let resText = await res.text();
+            let jsonObject = JSON.parse(resText);
+            return jsonObject;
+        } else {
+            console.log("Some error occurred");
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+export let getAllPayments = async (e) => {
+    try {
+        let res = await fetch("http://localhost:8080/phonestation/get-all-payments", {
+            method: "GET"
+        });
+        if (res.status === 200) {
+            let resText = await res.text();
+            let jsonObject = JSON.parse(resText);
+            return jsonObject;
+        } else {
+            console.log("Some error occurred");
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
 export let getClient = async (email, e) => {
     try {
         let res = await fetch("http://localhost:8080/phonestation/get-client", {
@@ -130,13 +163,15 @@ export let deleteInactiveClients = async ( e) => {
         });
 
         if (res.status === 200) {
-            let resText = await res.text();
-            let jsonObject = JSON.parse(resText);
-            return jsonObject;
+            //let resText = await res.text();
+            //console.log("resText", resText);
+            //let jsonObject = JSON.parse(resText);
+            return res.status;
         } else {
             console.log("Some error occurred.");
         }
     } catch (err) {
+        console.log("err");
         console.log(err);
     }
 }
@@ -318,6 +353,7 @@ export let addService = async (price, name, description, isTariff, e) => {
             let resText = await res.text();
             return resText.valueOf().trim()=="true";
         } else {
+            console.log(`Error: ${res.status} - ${res.statusText}`);
             console.log("Some error occurred.");
         }
     } catch (err) {
