@@ -5,21 +5,29 @@ import {useAuth0} from "@auth0/auth0-react";
 import PageContent from "./components/PageContent";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import LoadingComponent from "./components/LoadingComponent";
+import {useState} from "react";
+import MainPageButton from "./components/MainPageButton";
+import UserPageButton from "./components/UserPageButton";
 
 function App() {
     const { user, isAuthenticated , isLoading} = useAuth0();
+    let [pageContent, setPageContent] = useState(<PageContent />);
+
     if(isLoading) return <LoadingComponent/>
-    //if(!isAuthenticated) return <LoginPage/>
 
     return (
       <div id = "app">
           <div id="appContent">
-              <div id = "logButton">
+              <div id = "logButton" >
+                  <div className={"d-flex"}>
+                      <UserPageButton setContent={setPageContent}/>
+                      <MainPageButton setContent={setPageContent}/>
+                  </div>
                   <LoginButton />
                   <LogoutButton />
               </div>
               <div id="pageContent">
-                  <PageContent />
+                  {pageContent}
               </div>
           </div>
       </div>

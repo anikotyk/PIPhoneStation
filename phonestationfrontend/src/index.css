@@ -31,7 +31,8 @@ code {
 }
 
 #logButton{
-  float: right;
+    display: flex;
+    justify-content: space-between;
 }
 
 .btn-circle.btn-sm {
