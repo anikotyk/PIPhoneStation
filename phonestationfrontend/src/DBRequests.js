@@ -322,19 +322,6 @@ export let getAllPaymentsInPeriod = async (daysCount, e) => {
 
 export let getAllServices = async (e) => {
     try {
-        const testData = [
-            { id: 1, price: 100, name: "Service 1", description: "Description 1фівафіафівафіваasdfasdfasdfsadfsadfsafsdfsaf asdfasdfasdfsadf asdfadsfdfasdfsadfsdfsfsdaf", isTariff: true, isDeleted: false },
-            { id: 2, price: 200, name: "Service 2", description: "Description 2", isTariff: false, isDeleted: false },
-            { id: 3, price: 300, name: "Service 3", description: "Description 3", isTariff: true, isDeleted: false },
-            { id: 4, price: 300, name: "Service 4", description: "Description 4asdfqwfq34f34fw34fw34f34f3f34f34f fewqfewqf23f34f32f42f32f23323f23f23f", isTariff: true, isDeleted: false },
-            { id: 5, price: 300, name: "Service 5", description: "Description 5", isTariff: true, isDeleted: false },
-            { id: 6, price: 300, name: "Service 3", description: "Description 3", isTariff: true, isDeleted: false },
-            { id: 7, price: 300, name: "Service 4", description: "Description 4asdfqwfq34f34fw34fw34f34f3f34f34f fewqfewqf23f34f32f42f32f23323f23f23f", isTariff: true, isDeleted: false },
-            { id: 8, price: 300, name: "Service 5", description: "Description 5", isTariff: true, isDeleted: false },
-            { id: 9, price: 300, name: "Service 4", description: "Description 4asdfqwfq34f34fw34fw34f34f3f34f34f fewqfewqf23f34f32f42f32f23323f23f23f", isTariff: true, isDeleted: false },
-            { id: 10, price: 300, name: "Service 5", description: "Description 5", isTariff: true, isDeleted: false },
-        ];
-        return testData;
         let res = await fetch("http://localhost:8080/phonestation/get-all-services", {
             method: "GET"
         });
