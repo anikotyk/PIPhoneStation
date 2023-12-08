@@ -8,30 +8,39 @@ import LoadingComponent from "./components/LoadingComponent";
 import {useState} from "react";
 import MainPageButton from "./components/MainPageButton";
 import UserPageButton from "./components/UserPageButton";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import ServicesPage from './components/ServicesPage';
 
 function App() {
-    const { user, isAuthenticated , isLoading} = useAuth0();
-    let [pageContent, setPageContent] = useState(<PageContent />);
+    return (<Router>
+        <Routes>
+            <Route path="/services" element={<ServicesPage/>}/>
+        </Routes>
+    </Router>);
 
-    if(isLoading) return <LoadingComponent/>
 
-    return (
-      <div id = "app">
-          <div id="appContent">
-              <div id = "logButton" >
-                  <div className={"d-flex"}>
-                      <UserPageButton setContent={setPageContent}/>
-                      <MainPageButton setContent={setPageContent}/>
-                  </div>
-                  <LoginButton />
-                  <LogoutButton />
-              </div>
-              <div id="pageContent">
-                  {pageContent}
-              </div>
-          </div>
-      </div>
-    );
+    // const { user, isAuthenticated , isLoading} = useAuth0();
+    // let [pageContent, setPageContent] = useState(<PageContent />);
+
+    // if(isLoading) return <LoadingComponent/>
+
+    // return (
+    //   <div id = "app">
+    //       <div id="appContent">
+    //           <div id = "logButton" >
+    //               <div className={"d-flex"}>
+    //                   <UserPageButton setContent={setPageContent}/>
+    //                   <MainPageButton setContent={setPageContent}/>
+    //               </div>
+    //               <LoginButton />
+    //               <LogoutButton />
+    //           </div>
+    //           <div id="pageContent">
+    //               {pageContent}
+    //           </div>
+    //       </div>
+    //   </div>
+    // );
 }
 
 export default App;

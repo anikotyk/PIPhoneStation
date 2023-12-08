@@ -1,0 +1,64 @@
+.services-page-container {
+    background-color: #ececec;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+
+.services-main-box{
+    margin:auto;
+    margin-right: 200px;
+    border-width: 0px;
+    width:60%;
+  }
+
+.service-box {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.service-content {
+    display: flex;
+    flex-direction: column;
+    word-wrap: break-word;
+}
+
+.service-title {
+    margin-bottom: 0.5rem;
+}
+
+.service-price {
+    margin-bottom: 0.5rem;
+}
+
+.service-description {
+    margin-bottom: 0.5rem;
+}
+
+.price-buy-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.buy-button {
+    padding: 0.1rem 1rem;
+    background-color: #434343;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.buy-button:hover {
+    background-color: #656565;
+}
