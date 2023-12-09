@@ -1,10 +1,8 @@
 import {useAuth0} from "@auth0/auth0-react";
 import {Button} from "react-bootstrap";
 import React, {useState} from "react";
-import MainPage from "./MainPage";
 import {getClient, isAdmin} from "../DBRequests";
 import AdminPage from "./AdminPage";
-import LoadingComponent from "./LoadingComponent";
 import UserPage from "./UserPage";
 
 const UserPageButton = ({setContent})=>{

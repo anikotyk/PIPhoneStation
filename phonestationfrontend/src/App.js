@@ -38,6 +38,7 @@ function App() {
 
     return (
       <div id = "app">
+          <h1 className={"text-center p-2"}>Na Zvyazku</h1>
           <div id="appContent">
               <div id = "logButton" >
                   <div className={"d-flex"}>
