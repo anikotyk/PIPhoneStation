@@ -1,26 +1,21 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useLocation } from 'react-router-dom';
 import './PaymentPage.css';
 import LoadingComponent from "./LoadingComponent";
+import MainPage from "./MainPage";
 
-const PaymentPage = ({ }) => {
-    const location = useLocation();
-    const navigate = useNavigate();
-
+const PaymentPage = ({setContent, selectedService}) => {
     const [cardNumber, setCardNumber] = useState("");
     const [ccv, setCCV] = useState("");
     const [expirationDate, setExpirationDate] = useState("");
 
-    if (location.state === null || location.state.selectedService === null) return <LoadingComponent />
-    const selectedService = location.state.selectedService;
+    if (selectedService === null) return <LoadingComponent />
 
     const handleSubmit = (e) => {
         e.preventDefault();
     };
 
     const handleCancel = () => {
-        navigate('/services');
+        setContent(<MainPage setContent={setContent}/>);
     };
 
     return (

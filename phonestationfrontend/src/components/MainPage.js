@@ -1,58 +1,212 @@
-import {useState} from "react";
-import {getAllServices} from "../DBRequests";
+import { useState, useEffect } from "react";
+import { getAllServices } from "../DBRequests";
 import LoadingComponent from "./LoadingComponent";
 import Service from "../Service";
+import './MainPage.css';
+import PaymentPage from "./PaymentPage";
 
-function GetServicesList(allServices){
-    const listServices = allServices.map(service =>{
-        if(!service.isDeleted){
-            let elem = <li className="list-group-item">
-                <div className="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div className="d-flex flex-client-info">
-                            <div className="fw-bold">{service.isTariff ? "Tariff ": "Service " + service.name}</div>
+function GetServicesList(allServices, handleBuyClick, disabled) {
+
+    const listServices = allServices.map(service => {
+        if (!service.isDeleted) {
+            let elem = (
+                <div className="service-box">
+                    <div className="service-content">
+                        <div className="service-title fw-bold">
+                            {service.isTariff ? "Tariff: " : "Service: "} {service.name}
                         </div>
-                        <div className="text-muted">{service.price.toString()}</div>
-                        <div className="text-muted">{service.description}</div>
+                        <div className="service-description text-muted">{service.description}</div>
+                        <div className="price-buy-container">
+                            <div className="service-price text-muted"><b>Price:</b> {service.price.toString()}</div>
+                            <button className="buy-button" onClick={() => handleBuyClick(service)} disabled={disabled}>Buy</button>
+                        </div>
                     </div>
                 </div>
-            </li>;
+            );
 
             return elem;
         }
-        }
-    );
+    });
 
-    return listServices;
+    return <div className="services-grid">{listServices}</div>;
 }
 
 
-const MainPage = ()=>{
-    let [allServices, setAllServices] = useState(null);
 
-    if(allServices==null){
-        getAllServices().then(r=>{
+const MainPage = ({setContent}) => {
+    let [allServices, setAllServices] = useState(null);
+    let [filteredServices, setFilteredServices] = useState([]);
+    let [isTariffSort, setIsTariffSort] = useState("all");
+    let [priceRange, setPriceRange] = useState("all");
+    const handleBuyClick = (service) => {
+        setContent(<PaymentPage setContent={setContent} selectedService={service}/>);
+    };
+
+    if (allServices == null) {
+        getAllServices().then(r => {
             let services = r;
             let servicesArray = [];
-            for(let i = 0; i < services.length; i++){
+            for (let i = 0; i < services.length; i++) {
                 servicesArray.push(Service.from(services[i]));
             }
-            servicesArray.sort((a, b) =>  b.id - a.id);
+            servicesArray.sort((a, b) => b.id - a.id);
             setAllServices(servicesArray);
         });
     }
 
-    if(allServices==null) return <LoadingComponent/>
+    useEffect(() => {
+        let services = allServices;
 
-    const listServices = GetServicesList(allServices);
+        if (allServices === null) {
+            return;
+        }
+
+        if (isTariffSort === "true") {
+            services = services.filter(service => service.isTariff);
+        } else if (isTariffSort === "false") {
+            services = services.filter(service => !service.isTariff);
+        }
+        if (priceRange !== "all") {
+            if (priceRange === "500+") {
+                services = services.filter(service => service.price >= 500);
+            } else {
+                const [minPrice, maxPrice] = priceRange.split('-').map(Number);
+                services = services.filter(service => {
+                    if (maxPrice) {
+                        return service.price >= minPrice && service.price <= maxPrice;
+                    }
+                    return service.price >= minPrice;
+                });
+            }
+        }
+
+        setFilteredServices(services);
+    }, [allServices, isTariffSort, priceRange]);
+
+    if (allServices == null) return <LoadingComponent />
+
+    const listServices = GetServicesList(filteredServices, handleBuyClick, setContent === undefined);
+
 
     return (
-        <div>
-            <h3><center>Main Page</center></h3>
-            <h3><center>Services</center></h3>
-            <ul className="list-group list-group-light ul-clients shadow-sm p-3 mb-5 bg-white rounded">
-                {listServices}
-            </ul>
+        <div className="services-page-container">
+            <header className="page-header">
+                <h3>Services</h3>
+            </header>
+            <div className="content-container">
+                <div className="sidebar">
+                    <div className="list-group list-group-light sidebar shadow-sm p-3 mb-5 bg-white rounded">
+                        <div className="parameters-list">
+                            <h6 className="group-title">Filter By Type</h6>
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="isTariffSort"
+                                        value="all"
+                                        checked={isTariffSort === "all"}
+                                        onChange={() => setIsTariffSort("all")}
+                                    />
+                                    All
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="isTariffSort"
+                                        value="true"
+                                        checked={isTariffSort === "true"}
+                                        onChange={() => setIsTariffSort("true")}
+                                    />
+                                    Tariff Only
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="isTariffSort"
+                                        value="false"
+                                        checked={isTariffSort === "false"}
+                                        onChange={() => setIsTariffSort("false")}
+                                    />
+                                    Services Only
+                                </label>
+                            </div>
+                        </div>
+
+                        <div className="parameters-list">
+                            <h6 className="group-title">Sort by Price</h6>
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="priceRange"
+                                        value="all"
+                                        checked={priceRange === "all"}
+                                        onChange={() => setPriceRange("all")}
+                                    />
+                                    All
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="priceRange"
+                                        value="0-100"
+                                        checked={priceRange === "0-100"}
+                                        onChange={() => setPriceRange("0-100")}
+                                    />
+                                    0-100
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="priceRange"
+                                        value="100-250"
+                                        checked={priceRange === "100-250"}
+                                        onChange={() => setPriceRange("100-250")}
+                                    />
+                                    100-250
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="priceRange"
+                                        value="250-500"
+                                        checked={priceRange === "250-500"}
+                                        onChange={() => setPriceRange("250-500")}
+                                    />
+                                    250-500
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="priceRange"
+                                        value="500+"
+                                        checked={priceRange === "500+"}
+                                        onChange={() => setPriceRange("500+")}
+                                    />
+                                    500+
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="main-content">
+                    <div className="list-group list-group-light services-main-box shadow-sm p-3 mb-5 bg-white rounded">
+                        {listServices}
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }

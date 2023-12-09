@@ -4,7 +4,7 @@ import React from "react";
 import MainPage from "./MainPage";
 
 const MainPageButton = ({setContent})=>{
-    return <Button className={"me-1"} onClick={()=>setContent(<MainPage/>)} variant="success"> Menu </Button>
+    return <Button className={"me-1"} onClick={()=>setContent(<MainPage setContent={setContent}/>)} variant="success"> Menu </Button>
 }
 
 export default MainPageButton;

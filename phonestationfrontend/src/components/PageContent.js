@@ -11,7 +11,7 @@ const PageContent = ()=>{
     let [isUserAdmin, setIsUserAdmin] = useState(null);
     let [clientInfo, setClientInfo] = useState(null);
 
-    if(!isAuthenticated) return <MainPage/>
+    if(!isAuthenticated) return <MainPage />
 
     let email = user.email;
 
