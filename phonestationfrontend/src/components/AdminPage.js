@@ -91,8 +91,13 @@ function GetUsersTable(allClientsWithActiveServices) {
 const handleDeleteInactiveClients = async () => {
     try {
         const response = await deleteInactiveClients();
-        if (response)
+        if (response) {
+            alert("Inactive clients successfully deleted");
             window.location.reload();
+        }
+        else
+            alert("An error occurred while adding a service");
+
     } catch (error) {
         console.error('Error:', error);
     }
@@ -150,20 +155,23 @@ const AdminPage = () => {
                             Clients
                         </button>
                     </div>
-                </div >
+                    <div className="col-2" style={{display: 'flex', alignItems: 'center'}}>
+                        <button className="btn btn-primary" onClick={() => openModal()}>Add New Service</button>
+                    </div>
+                </div>
             </div>
             <h3>
                 <center>Clients</center>
             </h3>
             <Table class="table table-striped table-hover" sx={{minWidth: 650}} aria-label="simple table">
                 <TableRow>
-                    <TableCell>Username</TableCell>
-                    <TableCell align="center">Phone number</TableCell>
-                    <TableCell align="center">Email</TableCell>
-                    <TableCell align="center">Date of last visit</TableCell>
-                    <TableCell align="center">Current tariff</TableCell>
-                    <TableCell align="center">Services</TableCell>
-                    <TableCell align="center">Price</TableCell>
+                    <TableCell><b>Username</b></TableCell>
+                    <TableCell align="center"><b>Phone number</b></TableCell>
+                    <TableCell align="center"><b>Email</b></TableCell>
+                    <TableCell align="center"><b>Date of last visit</b></TableCell>
+                    <TableCell align="center"><b>Current tariff</b></TableCell>
+                    <TableCell align="center"><b>Services</b></TableCell>
+                    <TableCell align="center"><b>Price</b></TableCell>
                 </TableRow>
                 <TableBody>
                     {usersTable}
@@ -171,7 +179,7 @@ const AdminPage = () => {
             </Table>
 
             <div>
-                <button className="btn btn-primary" onClick={() => openModal()}>Add New Service</button>
+
                 <div id="myModalConfirm" className="modal">
                     <div className="modal-content center-text">
                         <span class="close right-text" onClick={() => closeModal()}>&times;</span>
