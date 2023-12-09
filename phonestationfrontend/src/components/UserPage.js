@@ -15,21 +15,19 @@ function GetServicesList(allServices, client, handleUnsubscribe){
     if(allServices == null)
         return;
     const listServices = allServices.map((service, index) =>{
-            if(!service.isDeleted){
-                let elem = <li className="list-group-item">
-                    <div className="service-box">
-                        <div className="service-content">
-                            <div className="service-title fw-bold">
-                                {service.isTariff ? "Tariff: " : "Service: "} {service.name}
-                            </div>
-                            <div className="service-description text-muted">{service.description}</div>
+            let elem = <li className="list-group-item">
+                <div className="service-box">
+                    <div className="service-content">
+                        <div className="service-title fw-bold">
+                            {service.isTariff ? "Tariff: " : "Service: "} {service.name}
                         </div>
-                        <button type="button" className="btn btn-danger" onClick={handleUnsubscribe(client.id, service.id, index)}>Unsubscribe</button>
+                        <div className="service-description text-muted">{service.description}</div>
                     </div>
-                </li>;
+                    <button type="button" className="btn btn-danger" onClick={() => handleUnsubscribe(client.id, service.id, index)}>Unsubscribe</button>
+                </div>
+            </li>;
 
-                return elem;
-            }
+            return elem;
         }
     );
 
@@ -106,7 +104,7 @@ const UserPage = ({client})=>{
                     <EditableText onChange={onPhoneNumberChange} initText={phoneNumber} fieldName={"Phone: "}/>
                     <p className="text-muted mb-2">{client.email}</p>
                     <p className="text-muted mb-2">{format(client.lastVisitDate, 'dd.MM.yyyy').toString()}</p>
-                    <ul className="list-group list-group-light ul-clients shadow-sm p-3 mb-5 bg-white rounded">
+                    <ul className="list-group list-group-light ul-clients p-3 mb-5 bg-white rounded">
                         {listServices}
                     </ul>
                 </div>
