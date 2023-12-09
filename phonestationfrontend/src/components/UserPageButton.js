@@ -22,9 +22,7 @@ const UserPageButton = ({setContent})=>{
         });
 
         return <div></div>
-    }
-
-    if(!isUserAdmin && clientInfo == null){
+    }else if(!isUserAdmin && clientInfo == null){
         getClient(user.email).then(r=>{
             setClientInfo(r)
         })
