@@ -1,25 +1,32 @@
-import { useState, useEffect } from "react";
-import { getAllServices } from "../DBRequests";
+import React, { useState, useEffect } from "react";
+import {addService, getAllServices, getClient, isAdmin, deleteService, editService} from "../DBRequests";
 import LoadingComponent from "./LoadingComponent";
 import Service from "../Service";
 import './MainPage.css';
 import PaymentPage from "./PaymentPage";
+import {useAuth0} from "@auth0/auth0-react";
 
-function GetServicesList(allServices, handleBuyClick, disabled) {
-
+function GetServicesList(allServices, handleBuyClick, disabled, isAdmin, handleDeleteClick, handleSaveClick, handleDiscardClick, handleEdit) {
     const listServices = allServices.map(service => {
         if (!service.isDeleted) {
-            let elem = (
-                <div className="service-box">
+           let elem = (
+                <div id={service.id} className="service-box" style={{display: "block"}}>
                     <div className="service-content">
                         <div className="service-title fw-bold">
-                            {service.isTariff ? "Tariff: " : "Service: "} {service.name}
+                            {service.isTariff ? "Tariff: " : "Service: "}<text id="serviceName" contentEditable={isAdmin} onInput={handleEdit}> {service.name}</text>
                         </div>
-                        <div className="service-description text-muted">{service.description}</div>
+                        <div id="serviceDescription" className="service-description text-muted" contentEditable={isAdmin} onInput={handleEdit}>{service.description}</div>
                         <div className="price-buy-container">
-                            <div className="service-price text-muted"><b>Price:</b> {service.price.toString()}</div>
-                            <button className="buy-button" onClick={() => handleBuyClick(service)} disabled={disabled}>Buy</button>
+                            <div className="service-price text-muted"><b>Price:</b> <text id="servicePrice" contentEditable={isAdmin} onInput={handleEdit}>{service.price.toString()}</text></div>
+                            {!isAdmin && !disabled && <button className="buy-button" onClick={() => handleBuyClick(service)} disabled={disabled}>Buy</button>}
                         </div>
+                        {isAdmin && <div className="delete-button-div">
+                            <button className="delete-button" onClick={(event) => handleDeleteClick(event, service.id)}>Delete</button>
+                        </div>}
+                        {isAdmin && <div id="adminBtns" className="delete-button-div" style={{display: "none"}}>
+                            <button id="discardAdminBtn" className="buy-button" onClick={(event) =>handleDiscardClick(event, service)}>Discard</button>
+                            <button id="saveAdminBtn" className="discard-button" onClick={(event) =>handleSaveClick(event, service)}>Save</button>
+                        </div>}
                     </div>
                 </div>
             );
@@ -31,18 +38,103 @@ function GetServicesList(allServices, handleBuyClick, disabled) {
     return <div className="services-grid">{listServices}</div>;
 }
 
-
-
 const MainPage = ({setContent}) => {
+    const { user, isAuthenticated} = useAuth0();
     let [allServices, setAllServices] = useState(null);
+    let [clientInfo, setClientInfo] = useState(null);
     let [filteredServices, setFilteredServices] = useState([]);
     let [isTariffSort, setIsTariffSort] = useState("all");
     let [priceRange, setPriceRange] = useState("all");
+    let [userAdminData, setIsUserAdmin] = useState("unloaded");
+    let [requireUpdate, setRequireUpdate] = useState("all");
+
+    let isUserAdmin = userAdminData === "unloaded" ? false : userAdminData;
+
+    if(isAuthenticated){
+        let email = user.email;
+        if(userAdminData==="unloaded"){
+            isAdmin(email).then(r =>{
+                setIsUserAdmin(r);
+            });
+        }else if(userAdminData !== "unloaded" && !isUserAdmin && clientInfo == null){
+            getClient(email).then(r=>{
+                setClientInfo(r)
+            })
+        }
+    }
+
     const handleBuyClick = (service) => {
-        setContent(<PaymentPage setContent={setContent} selectedService={service}/>);
+        setContent(<PaymentPage setContent={setContent} selectedService={service} client={clientInfo}/>);
     };
 
-    if (allServices == null) {
+    const handleDeleteClick = (event, serviceId) => {
+        deleteService(serviceId).then(r => {
+            refreshServices();
+        });
+
+        setTimeout(function() {
+            alert('Service deleted successfully');
+        }, 1);
+    };
+
+    const handleSaveClick = (event, service) => {
+        const parentDiv = event.target.closest('.service-box');
+        if (parentDiv) {
+            let intNum = parentDiv.querySelector('#servicePrice').textContent.replace(/\D/g, '').trim();
+            intNum = parseInt(intNum);
+            if(isNaN(intNum) || intNum <= 0) {
+                alert("Price is incorrect");
+                return;
+            }
+
+            let serviceName = parentDiv.querySelector('#serviceName').textContent.trim();
+            if(serviceName.length <= 0) {
+                alert("Service name can't be empty");
+                return;
+            }
+
+            let serviceDescription = parentDiv.querySelector('#serviceDescription').textContent.trim();
+            if(serviceDescription.length <= 0) {
+                alert("Service description can't be empty");
+                return;
+            }
+
+            parentDiv.querySelector('#adminBtns').style.display = "none";
+
+            editService(service.id, intNum, serviceName, serviceDescription, service.isTariff).then(r => {
+                refreshServices();
+            });
+
+            setTimeout(function() {
+                alert('Service edited successfully');
+            }, 1);
+        }
+    };
+
+    const handleDiscardClick = (event, service) => {
+        const parentDiv = event.target.closest('.service-box');
+        if (parentDiv) {
+            parentDiv.querySelector('#adminBtns').style.display = "none";
+
+            parentDiv.querySelector('#serviceName').innerText = service.name;
+            parentDiv.querySelector('#serviceDescription').innerText = service.description;
+            parentDiv.querySelector('#servicePrice').innerText = service.price.toString();
+        }
+    };
+
+    const handleEdit = (event) => {
+        const parentDiv = event.target.closest('.service-box');
+        if (parentDiv) {
+            parentDiv.querySelector('#adminBtns').style.display = "flex";
+
+            let intNum = parentDiv.querySelector('#servicePrice').textContent.replace(/\D/g, '');
+            intNum = parseInt(intNum);
+            if(isNaN(intNum)) {intNum = 0;}
+            parentDiv.querySelector('#servicePrice').textContent = intNum;
+        }
+    };
+
+    const refreshServices = () => {
         getAllServices().then(r => {
             let services = r;
             let servicesArray = [];
@@ -51,7 +143,12 @@ const MainPage = ({setContent}) => {
             }
             servicesArray.sort((a, b) => b.id - a.id);
             setAllServices(servicesArray);
+            setRequireUpdate(true);
         });
+    };
+
+    if(allServices == null){
+        refreshServices();
     }
 
     useEffect(() => {
@@ -79,14 +176,13 @@ const MainPage = ({setContent}) => {
                 });
             }
         }
-
         setFilteredServices(services);
-    }, [allServices, isTariffSort, priceRange]);
+    }, [allServices, isTariffSort, priceRange, requireUpdate]);
 
     if (allServices == null) return <LoadingComponent />
+    if (isAuthenticated && (isUserAdmin == null || clientInfo == null)) return <LoadingComponent/>
 
-    const listServices = GetServicesList(filteredServices, handleBuyClick, setContent === undefined);
-
+    const listServices = GetServicesList(filteredServices, handleBuyClick, setContent === undefined, isUserAdmin, handleDeleteClick, handleSaveClick, handleDiscardClick, handleEdit);
 
     return (
         <div className="services-page-container">
