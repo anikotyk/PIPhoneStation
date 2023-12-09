@@ -87,9 +87,10 @@
     list-style: none;
     padding: 0;
     margin: 0;
+    margin-bottom: 20px;
 }
 
-.parameters-list li {
+.parameters-list div {
     margin-bottom: 10px;
 }
 
@@ -99,7 +100,7 @@
     cursor: pointer;
 }
 
-.parameters-list input[type="checkbox"] {
+.parameters-list input[type="radio"] {
     margin-right: 10px;
     cursor: pointer;
     accent-color: #030303;

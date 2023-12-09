@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getAllServices } from "../DBRequests";
 import LoadingComponent from "./LoadingComponent";
 import Service from "../Service";
@@ -33,11 +33,13 @@ function GetServicesList(allServices) {
 
 const ServicesPage = () => {
     let [allServices, setAllServices] = useState(null);
+    let [filteredServices, setFilteredServices] = useState([]);
+    let [isTariffSort, setIsTariffSort] = useState("all");
+    let [priceRange, setPriceRange] = useState("all");
 
     if (allServices == null) {
         getAllServices().then(r => {
             let services = r;
-            console.log(services);
             let servicesArray = [];
             for (let i = 0; i < services.length; i++) {
                 servicesArray.push(Service.from(services[i]));
@@ -47,9 +49,39 @@ const ServicesPage = () => {
         });
     }
 
+    useEffect(() => {
+        let services = allServices;
+
+        if (allServices === null) {
+            return;
+        }
+
+        if (isTariffSort === "true") {
+            services = services.filter(service => service.isTariff);
+        } else if (isTariffSort === "false") {
+            services = services.filter(service => !service.isTariff);
+        }
+        if (priceRange !== "all") {
+            if (priceRange === "500+") {
+                services = services.filter(service => service.price >= 500);
+            } else {
+                const [minPrice, maxPrice] = priceRange.split('-').map(Number);
+                services = services.filter(service => {
+                    if (maxPrice) {
+                        return service.price >= minPrice && service.price <= maxPrice;
+                    }
+                    return service.price >= minPrice;
+                });
+            }
+        }
+
+        setFilteredServices(services);
+    }, [allServices, isTariffSort, priceRange]);
+
     if (allServices == null) return <LoadingComponent />
 
-    const listServices = GetServicesList(allServices);
+
+    const listServices = GetServicesList(filteredServices);
 
 
     return (
@@ -61,20 +93,109 @@ const ServicesPage = () => {
             <div className="content-container">
                 <div className="sidebar">
                     <div className="list-group list-group-light sidebar shadow-sm mb-5 bg-white rounded">
-                        <ul className="parameters-list">
-                            <li>
+                        <div className="parameters-list">
+                            <h6 className="group-title">Filter By Type</h6>
+                            <div>
                                 <label>
-                                    <input type="checkbox" />
-                                    Parameter1
+                                    <input
+                                        type="radio"
+                                        name="isTariffSort"
+                                        value="all"
+                                        checked={isTariffSort === "all"}
+                                        onChange={() => setIsTariffSort("all")}
+                                    />
+                                    All
                                 </label>
-                            </li>
-                            <li>
+                            </div>
+                            <div>
                                 <label>
-                                    <input type="checkbox" />
-                                    Parameter 2
+                                    <input
+                                        type="radio"
+                                        name="isTariffSort"
+                                        value="true"
+                                        checked={isTariffSort === "true"}
+                                        onChange={() => setIsTariffSort("true")}
+                                    />
+                                    Tariff Only
                                 </label>
-                            </li>
-                        </ul>
+                            </div>
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="isTariffSort"
+                                        value="false"
+                                        checked={isTariffSort === "false"}
+                                        onChange={() => setIsTariffSort("false")}
+                                    />
+                                    Services Only
+                                </label>
+                            </div>
+                        </div>
+
+                        <div className="parameters-list">
+                            <h6 className="group-title">Sort by Price</h6>
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="priceRange"
+                                        value="all"
+                                        checked={priceRange === "all"}
+                                        onChange={() => setPriceRange("all")}
+                                    />
+                                    All
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="priceRange"
+                                        value="0-100"
+                                        checked={priceRange === "0-100"}
+                                        onChange={() => setPriceRange("0-100")}
+                                    />
+                                    0-100
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="priceRange"
+                                        value="100-250"
+                                        checked={priceRange === "100-250"}
+                                        onChange={() => setPriceRange("100-250")}
+                                    />
+                                    100-250
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="priceRange"
+                                        value="250-500"
+                                        checked={priceRange === "250-500"}
+                                        onChange={() => setPriceRange("250-500")}
+                                    />
+                                    250-500
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="priceRange"
+                                        value="500+"
+                                        checked={priceRange === "500+"}
+                                        onChange={() => setPriceRange("500+")}
+                                    />
+                                    500+
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div className="main-content">
