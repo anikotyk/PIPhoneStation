@@ -8,15 +8,33 @@ import LoadingComponent from "./components/LoadingComponent";
 import {useState} from "react";
 import MainPageButton from "./components/MainPageButton";
 import UserPageButton from "./components/UserPageButton";
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import MainPage from './components/MainPage';
-import PaymentPage from './components/PaymentPage';
+import {getClient, isAdmin} from "./DBRequests";
 
 function App() {
     const { user, isAuthenticated , isLoading} = useAuth0();
     let [pageContent, setPageContent] = useState(<PageContent/>);
+    let [isUserAdmin, setIsUserAdmin] = useState(null);
+    let [clientInfo, setClientInfo] = useState(null);
 
     if(isLoading) return <LoadingComponent/>
+
+    if(isAuthenticated){
+        let email = user.email;
+
+        if(isUserAdmin==null){
+            isAdmin(email).then(r =>{
+                setIsUserAdmin(r);
+            });
+
+            return <LoadingComponent/>
+        }else if(!isUserAdmin && clientInfo == null){
+            getClient(email).then(r=>{
+                setClientInfo(r)
+            })
+            
+            return <LoadingComponent/>
+        }
+    }
 
     return (
       <div id = "app">
