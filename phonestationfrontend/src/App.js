@@ -10,10 +10,12 @@ import MainPageButton from "./components/MainPageButton";
 import UserPageButton from "./components/UserPageButton";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ServicesPage from './components/ServicesPage';
+import PaymentPage from './components/PaymentPage';
 
 function App() {
     return (<Router>
         <Routes>
+            <Route path="/payment" element={<PaymentPage/>}/>
             <Route path="/services" element={<ServicesPage/>}/>
         </Routes>
     </Router>);

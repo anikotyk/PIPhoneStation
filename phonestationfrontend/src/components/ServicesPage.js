@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import { getAllServices } from "../DBRequests";
 import LoadingComponent from "./LoadingComponent";
 import Service from "../Service";
 import './ServicesPage.css';
 
-function GetServicesList(allServices) {
+function GetServicesList(allServices, handleBuyClick) {
+
     const listServices = allServices.map(service => {
         if (!service.isDeleted) {
             let elem = (
@@ -16,7 +18,7 @@ function GetServicesList(allServices) {
                         <div className="service-description text-muted">{service.description}</div>
                         <div className="price-buy-container">
                             <div className="service-price text-muted"><b>Price:</b> {service.price.toString()}</div>
-                            <button className="buy-button">Buy</button>
+                            <button className="buy-button" onClick={() => handleBuyClick(service)}>Buy</button>
                         </div>
                     </div>
                 </div>
@@ -32,10 +34,15 @@ function GetServicesList(allServices) {
 
 
 const ServicesPage = () => {
+    const navigate = useNavigate();
     let [allServices, setAllServices] = useState(null);
     let [filteredServices, setFilteredServices] = useState([]);
     let [isTariffSort, setIsTariffSort] = useState("all");
     let [priceRange, setPriceRange] = useState("all");
+    
+    const handleBuyClick = (service) => {
+        navigate('/payment', { state: { selectedService: service } });
+    };
 
     if (allServices == null) {
         getAllServices().then(r => {
@@ -80,8 +87,7 @@ const ServicesPage = () => {
 
     if (allServices == null) return <LoadingComponent />
 
-
-    const listServices = GetServicesList(filteredServices);
+    const listServices = GetServicesList(filteredServices, handleBuyClick);
 
 
     return (
