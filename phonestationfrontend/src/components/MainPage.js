@@ -6,7 +6,7 @@ import './MainPage.css';
 import PaymentPage from "./PaymentPage";
 import {useAuth0} from "@auth0/auth0-react";
 
-function GetServicesList(allServices, handleBuyClick, disabled, isAdmin, handleDeleteClick, handleSaveClick, handleDiscardClick, handleEdit) {
+function GetServicesList(allServices, handleBuyClick, isClient, isAdmin, handleDeleteClick, handleSaveClick, handleDiscardClick, handleEdit) {
     const listServices = allServices.map(service => {
         if (!service.isDeleted) {
            let elem = (
@@ -18,7 +18,7 @@ function GetServicesList(allServices, handleBuyClick, disabled, isAdmin, handleD
                         <div id="serviceDescription" className="service-description text-muted" contentEditable={isAdmin} onInput={handleEdit}>{service.description}</div>
                         <div className="price-buy-container">
                             <div className="service-price text-muted"><b>Price:</b> <text id="servicePrice" contentEditable={isAdmin} onInput={handleEdit}>{service.price.toString()}</text></div>
-                            {!isAdmin && !disabled && <button className="buy-button" onClick={() => handleBuyClick(service)} disabled={disabled}>Buy</button>}
+                            {!isAdmin && <button className="buy-button" onClick={() => handleBuyClick(service, isClient)}>Buy</button>}
                         </div>
                         {isAdmin && <div className="delete-button-div">
                             <button className="delete-button" onClick={(event) => handleDeleteClick(event, service.id)}>Delete</button>
@@ -63,8 +63,12 @@ const MainPage = ({setContent}) => {
         }
     }
 
-    const handleBuyClick = (service) => {
-        setContent(<PaymentPage setContent={setContent} selectedService={service} client={clientInfo}/>);
+    const handleBuyClick = (service, isClient) => {
+        if(!isClient){
+            alert('Available only to authorized users');
+        }else{
+            setContent(<PaymentPage setContent={setContent} selectedService={service} client={clientInfo}/>);
+        }
     };
 
     const handleDeleteClick = (event, serviceId) => {
@@ -182,7 +186,7 @@ const MainPage = ({setContent}) => {
     if (allServices == null) return <LoadingComponent />
     if (isAuthenticated && (isUserAdmin == null || clientInfo == null)) return <LoadingComponent/>
 
-    const listServices = GetServicesList(filteredServices, handleBuyClick, setContent === undefined, isUserAdmin, handleDeleteClick, handleSaveClick, handleDiscardClick, handleEdit);
+    const listServices = GetServicesList(filteredServices, handleBuyClick, clientInfo !== null, isUserAdmin, handleDeleteClick, handleSaveClick, handleDiscardClick, handleEdit);
 
     return (
         <div className="services-page-container">
