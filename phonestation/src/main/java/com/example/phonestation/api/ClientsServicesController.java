@@ -67,4 +67,12 @@ public class ClientsServicesController {
         String json = gson.toJson(services);
         return json;
     }
+
+    @PostMapping("/get-client-has-tariff")
+    public boolean getClientHasTariff(@RequestBody String body) throws JSONException {
+        JSONObject obj = new JSONObject(body);
+        Long clientId = obj.getLong("clientId");
+
+        return clientsServiceService.getClientHasTariff(clientId);
+    }
 }

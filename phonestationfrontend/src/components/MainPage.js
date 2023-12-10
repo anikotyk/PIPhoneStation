@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import {addService, getAllServices, getClient, isAdmin, deleteService, editService} from "../DBRequests";
+import {
+    addService,
+    getAllServices,
+    getClient,
+    isAdmin,
+    deleteService,
+    editService,
+    getClientHasTariff
+} from "../DBRequests";
 import LoadingComponent from "./LoadingComponent";
 import Service from "../Service";
 import './MainPage.css';
@@ -67,7 +75,20 @@ const MainPage = ({setContent}) => {
         if(!isClient){
             alert('Available only to authorized users');
         }else{
-            setContent(<PaymentPage setContent={setContent} selectedService={service} client={clientInfo}/>);
+            if(service.isTariff){
+                getClientHasTariff(clientInfo.id).then(r =>{
+                    if(r){
+                        let result = window.confirm('You already have active Tariff. Do you want to discard current active Tariff?');
+                        if(result){
+                            setContent(<PaymentPage setContent={setContent} selectedService={service} client={clientInfo}/>);
+                        }
+                    }else{
+                        setContent(<PaymentPage setContent={setContent} selectedService={service} client={clientInfo}/>);
+                    }
+                });
+            }else{
+                setContent(<PaymentPage setContent={setContent} selectedService={service} client={clientInfo}/>);
+            }
         }
     };
 

@@ -404,3 +404,23 @@ export let editService = async (serviceId, price, name, description, isTariff, e
         console.log(err);
     }
 }
+
+export let getClientHasTariff = async (clientId, e) => {
+    try {
+        let res = await fetch("http://localhost:8080/phonestation/get-client-has-tariff", {
+            method: "POST",
+            body: JSON.stringify({
+                clientId: clientId,
+            }),
+        });
+
+        if (res.status === 200) {
+            let resText = await res.text();
+            return resText.valueOf().trim()=="true";
+        } else {
+            console.log("Some error occurred.");
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
