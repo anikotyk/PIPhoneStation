@@ -190,14 +190,14 @@ const MainPage = ({setContent}) => {
         }
         if (priceRange !== "all") {
             if (priceRange === "500+") {
-                services = services.filter(service => service.price >= 500);
+                services = services.filter(service => service.price > 500);
             } else {
                 const [minPrice, maxPrice] = priceRange.split('-').map(Number);
                 services = services.filter(service => {
                     if (maxPrice) {
-                        return service.price >= minPrice && service.price <= maxPrice;
+                        return service.price > minPrice && service.price <= maxPrice;
                     }
-                    return service.price >= minPrice;
+                    return service.price > minPrice;
                 });
             }
         }
