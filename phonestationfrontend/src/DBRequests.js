@@ -2,7 +2,7 @@ import Client from "./Client";
 
 export let isAdmin = async (email, e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/is-admin", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/is-admin", {
             method: "POST",
             body: JSON.stringify({
                 clientEmail: email,
@@ -22,7 +22,7 @@ export let isAdmin = async (email, e) => {
 
 export let getAllClients = async (e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/get-all-clients", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/get-all-clients", {
             method: "GET"
         });
         if (res.status === 200) {
@@ -39,7 +39,7 @@ export let getAllClients = async (e) => {
 
 export let getAllClientsWithActiveServices = async (e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/get-all-clients-with-active-services", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/get-all-clients-with-active-services", {
             method: "GET"
         });
         if (res.status === 200) {
@@ -56,7 +56,7 @@ export let getAllClientsWithActiveServices = async (e) => {
 
 export let getAllPayments = async (e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/get-all-payments", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/get-all-payments", {
             method: "GET"
         });
         if (res.status === 200) {
@@ -72,7 +72,7 @@ export let getAllPayments = async (e) => {
 }
 export let getClient = async (email, e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/get-client", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/get-client", {
             method: "POST",
             body: JSON.stringify({
                 clientEmail: email,
@@ -93,7 +93,7 @@ export let getClient = async (email, e) => {
 
 export let setClientPhone = async (clientId, clientPhone, e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/set-client-phone", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/set-client-phone", {
             method: "POST",
             body: JSON.stringify({
                 clientId: clientId,
@@ -115,7 +115,7 @@ export let setClientPhone = async (clientId, clientPhone, e) => {
 
 export let setClientUsername = async (clientId, clientUsername, e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/set-client-username", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/set-client-username", {
             method: "POST",
             body: JSON.stringify({
                 clientId: clientId,
@@ -137,7 +137,7 @@ export let setClientUsername = async (clientId, clientUsername, e) => {
 
 export let onClientVisited = async (clientId, e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/on-client-visited", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/on-client-visited", {
             method: "POST",
             body: JSON.stringify({
                 clientId: clientId
@@ -158,7 +158,7 @@ export let onClientVisited = async (clientId, e) => {
 
 export let deleteInactiveClients = async ( e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/delete-inactive-clients", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/delete-inactive-clients", {
             method: "POST"
         });
 
@@ -178,7 +178,7 @@ export let deleteInactiveClients = async ( e) => {
 
 export let getCountActiveUsersInPeriod = async (e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/get-count-active-users-in-period", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/get-count-active-users-in-period", {
             method: "POST"
         });
 
@@ -196,7 +196,7 @@ export let getCountActiveUsersInPeriod = async (e) => {
 
 export let addServiceToClient = async (clientId, serviceId, e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/add-service-to-client", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/add-service-to-client", {
             method: "POST",
             body: JSON.stringify({
                 clientId: clientId,
@@ -217,7 +217,7 @@ export let addServiceToClient = async (clientId, serviceId, e) => {
 
 export let removeServiceFromClient = async (clientId, serviceId, e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/remove-service-from-client", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/remove-service-from-client", {
             method: "POST",
             body: JSON.stringify({
                 clientId: clientId,
@@ -238,7 +238,7 @@ export let removeServiceFromClient = async (clientId, serviceId, e) => {
 
 export let getAllClientActiveServices = async (clientId, e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/get-all-client-active-services", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/get-all-client-active-services", {
             method: "POST",
             body: JSON.stringify({
                 clientId: clientId,
@@ -259,7 +259,7 @@ export let getAllClientActiveServices = async (clientId, e) => {
 
 export let addClientPayment = async (clientId, serviceId, e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/add-client-payment", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/add-client-payment", {
             method: "POST",
             body: JSON.stringify({
                 clientId: clientId,
@@ -280,7 +280,7 @@ export let addClientPayment = async (clientId, serviceId, e) => {
 
 export let getAllClientPayments = async (clientId, e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/get-all-client-payments", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/get-all-client-payments", {
             method: "POST",
             body: JSON.stringify({
                 clientId: clientId,
@@ -301,7 +301,7 @@ export let getAllClientPayments = async (clientId, e) => {
 
 export let getAllPaymentsInPeriod = async (daysCount, e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/get-all-payments-in-period", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/get-all-payments-in-period", {
             method: "POST",
             body: JSON.stringify({
                 daysCount: daysCount,
@@ -322,7 +322,7 @@ export let getAllPaymentsInPeriod = async (daysCount, e) => {
 
 export let getAllServices = async (e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/get-all-services", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/get-all-services", {
             method: "GET"
         });
         if (res.status === 200) {
@@ -339,7 +339,7 @@ export let getAllServices = async (e) => {
 
 export let addService = async (price, name, description, isTariff, e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/add-service", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/add-service", {
             method: "POST",
             body: JSON.stringify({
                 price: price,
@@ -363,7 +363,7 @@ export let addService = async (price, name, description, isTariff, e) => {
 
 export let deleteService = async (serviceId, e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/delete-service", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/delete-service", {
             method: "POST",
             body: JSON.stringify({
                 serviceId: serviceId
@@ -383,7 +383,7 @@ export let deleteService = async (serviceId, e) => {
 
 export let editService = async (serviceId, price, name, description, isTariff, e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/edit-service", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/edit-service", {
             method: "POST",
             body: JSON.stringify({
                 serviceId: serviceId,
@@ -407,7 +407,7 @@ export let editService = async (serviceId, price, name, description, isTariff, e
 
 export let getClientHasTariff = async (clientId, e) => {
     try {
-        let res = await fetch("http://localhost:8080/phonestation/get-client-has-tariff", {
+        let res = await fetch("https://intouchbackend-wedx.onrender.com/phonestation/get-client-has-tariff", {
             method: "POST",
             body: JSON.stringify({
                 clientId: clientId,
