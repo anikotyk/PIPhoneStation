@@ -7,7 +7,7 @@ import {
 import {format} from "date-fns";
 import {deleteInactiveClients} from "../DBRequests";
 import React from "react";
-import {Table, TableBody, TableRow, TableCell} from '@material-ui/core';
+import {Table, TableBody, TableRow, TableCell} from '@mui/material';
 
 function GetUsersList(allClients) {
     const listUsers = allClients.map(client => {
